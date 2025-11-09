@@ -37,14 +37,7 @@ public class TaskManager {
 
     //Mark a task as complete
 //    public void markTaskComplete(int id){
-//        Optional<Task> taskOpt = findTaskById(id);
-//        if (taskOpt.isPresent()){
-//            Task task = taskOpt.get();
-//            task.markTaskComplete();
-//            System.out.println("✅ Task marked as complete: " + task.getTitle());
-//        } else {
-//            System.out.println("⚠️ Task with ID " + id + " not found.");
-//        }
+//
 //    }
     // 🟥 Delete a task by ID
     public void deleteTask(int id) {
@@ -63,5 +56,17 @@ public class TaskManager {
         tasks.clear();
         nextId = 1;
         System.out.println("All tasks cleared.");
+    }
+
+    public void markTaskComplete(int id) {
+
+        Optional<Task> taskOpt = findTaskById(id);
+        if (taskOpt.isPresent()){
+            Task task = taskOpt.get();
+            task.markAsCompleted();
+            System.out.println("✅ Task marked as complete: " + task.getTitle());
+        } else {
+            System.out.println("⚠️ Task with ID " + id + " not found.");
+        }
     }
 }

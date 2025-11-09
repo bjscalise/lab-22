@@ -41,9 +41,6 @@ public class Task {
         return priority;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
 
     //SETTERS
 
@@ -72,6 +69,14 @@ public class Task {
         this.completed = completed;
     }
 
+    public void markAsCompleted(){
+        this.completed = true;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
     // Print toString() for displaying the task in console output
     @Override
     public String toString() {
@@ -81,5 +86,6 @@ public class Task {
                 dueDate,
                 priority,
                 (completed ? "✅ Done" : "❌ Pending"));
+
     }
 }

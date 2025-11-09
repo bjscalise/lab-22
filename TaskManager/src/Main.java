@@ -4,6 +4,7 @@ import model.Task;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,14 +23,12 @@ public class Main {
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
 
-            try {
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+            int choice = readInt(scanner);
 
                 switch (choice) {
                     case 1 -> addTask(scanner, manager);
                     case 2 -> manager.listTasks();
-                   // case 3 -> markTaskComplete(scanner, manager);
+                    case 3 -> markTaskComplete(scanner, manager);
                     case 4 -> deleteTask(scanner, manager);
                     case 5 -> {
                         running = false;
@@ -37,46 +36,83 @@ public class Main {
                     }
                     default -> System.out.println("⚠️ Invalid choice. Please try again.");
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("⚠️ Invalid input. Please enter a number.");
-                scanner.nextLine(); // clear invalid input
+
             }
 
-        }
         scanner.close();
     }
 
-    // 🟩 Add a new task
+    // Validate the integer input
+private static int readInt(Scanner scanner){
+        while (true) {
+            try {
+                int value = Integer.parseInt(scanner.nextLine().trim());
+                return value;
+            } catch (NumberFormatException e){
+                System.out.print("⚠️ Please enter a valid number: ");
+            }
+        }
+    }
+
     private static void addTask(Scanner scanner, TaskManager manager) {
         System.out.print("Enter task title: ");
-        String title = scanner.nextLine();
+        String title = "";
+        while (title.trim().isEmpty()) {
+            System.out.print("Enter task title: ");
+            title = scanner.nextLine().trim();
+            if (title.trim().isEmpty()) {
+                System.out.println("⚠️ Title cannot be empty. Please enter a valid title.");
+            }
+        }
+        title = title.trim();
 
-        System.out.print("Enter description: ");
-        String description = scanner.nextLine();
+        String description = "";
+        while (description.trim().isEmpty()) {
+            System.out.print("Enter task description: ");
+            description = scanner.nextLine().trim();
+            if (description.trim().isEmpty()) {
+                System.out.println("⚠️ Description cannot be empty. Please enter a valid description.");
+            }
+        }
+        description = description.trim();
 
-        System.out.print("Enter due date (YYYY-MM-DD): ");
-        String dateInput = scanner.nextLine();
-        LocalDate dueDate = LocalDate.parse(dateInput);
+        LocalDate dueDate = null;
+        while (dueDate == null) {
+            System.out.print("Enter due date (YYYY-MM-DD): ");
+            String dateInput = scanner.nextLine().trim();
+            try {
+                dueDate = LocalDate.parse(dateInput);
+            } catch (DateTimeParseException e) {
+                System.out.println("⚠️ Invalid date format. Please use YYYY-MM-DD (e.g., 2025-11-05).");
+            }
+        }
 
-        System.out.print("Enter priority (LOW, MEDIUM, HIGH): ");
-        String priority = scanner.nextLine().toUpperCase();
+        String priority = "";
+        while (true) {
+            System.out.print("Enter priority (LOW, MEDIUM, HIGH): ");
+            priority = scanner.nextLine().trim().toUpperCase();
+
+            if (priority.equals("LOW") || priority.equals("MEDIUM") || priority.equals("HIGH")) {
+                break;
+            } else {
+                System.out.println("⚠️ Invalid priority. Please enter LOW, MEDIUM, or HIGH.");
+            }
+        }
 
         manager.addTask(title, description, dueDate, priority);
     }
 
-    // 🟦 Mark task complete
-//    private static void markTaskComplete(Scanner scanner, TaskManager manager) {
-//        System.out.print("Enter task ID to mark complete: ");
-//        int id = scanner.nextInt();
-//        scanner.nextLine();
-//        manager.markTaskComplete(id);
-//    }
+     //Mark task complete
+    private static void markTaskComplete(Scanner scanner, TaskManager manager) {
+        System.out.print("Enter task ID to mark complete: ");
+        int id = readInt(scanner);
+        manager.markTaskComplete(id);
+    }
 
-    // 🟥 Delete a task
+    // Delete a task
     private static void deleteTask(Scanner scanner, TaskManager manager) {
         System.out.print("Enter task ID to delete: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
+        int id = readInt(scanner);
         manager.deleteTask(id);
     }
 }
